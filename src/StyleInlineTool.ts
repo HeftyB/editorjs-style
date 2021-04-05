@@ -26,11 +26,11 @@ class StyleInlineTool implements InlineTool {
   }
 
   static prepare() {
-    if (customElements.get('editorjs-style')) {
+    if (customElements.get('span')) {
       return;
     }
 
-    customElements.define('editorjs-style', EditorJSStyleElement);
+    customElements.define('span', EditorJSStyleElement);
   }
 
   #actions: HTMLDivElement;
@@ -72,12 +72,6 @@ class StyleInlineTool implements InlineTool {
         </div>
 
         <label style="display: flex; align-items: center; justify-content: space-between; ">
-          <span>ID</span>
-
-          <input class="id-input ${
-            this.#api.styles.input
-          }" style="width: 80%; ">
-        </label>
 
         <label style="display: flex; align-items: center; justify-content: space-between; ">
           <span>Class</span>
@@ -85,16 +79,6 @@ class StyleInlineTool implements InlineTool {
           <input class="class-input ${
             this.#api.styles.input
           }" style="width: 80%; ">
-        </label>
-
-        <label style="display: flex; align-items: center; justify-content: space-between; ">
-          <span>Style</span>
-
-          <textarea
-            class="style-textarea ${this.#api.styles.input}"
-            placeholder="background: #ffe7e8;"
-            style="resize: none; width: 80%; ">
-          </textarea>
         </label>
       </div>
     `;
@@ -107,18 +91,11 @@ class StyleInlineTool implements InlineTool {
       '.class-input'
     ) as HTMLInputElement | null;
 
-    const idInput = this.#actions.querySelector(
-      '.id-input'
-    ) as HTMLInputElement | null;
-
-    const styleTextarea = this.#actions.querySelector(
-      '.style-textarea'
-    ) as HTMLTextAreaElement | null;
-
-    if (!deleteButton || !classInput || !idInput || !styleTextarea) {
+    if ( !classInput ) {
       throw new EditorJSStyleError();
     }
 
+    // @ts-ignore
     deleteButton.addEventListener('click', () => {
       const clonedNodes = Array.from(
         editorJSStyleElement.childNodes
@@ -156,6 +133,7 @@ class StyleInlineTool implements InlineTool {
       this.#api.tooltip.hide();
     });
 
+    // @ts-ignore
     this.#api.tooltip.onHover(deleteButton, 'Delete style', {
       placement: 'top',
     });
@@ -164,24 +142,6 @@ class StyleInlineTool implements InlineTool {
 
     classInput.addEventListener('input', () =>
       editorJSStyleElement.setAttribute('class', classInput.value)
-    );
-
-    idInput.value = editorJSStyleElement.id;
-
-    idInput.addEventListener(
-      'input',
-      () => (editorJSStyleElement.id = idInput.value)
-    );
-
-    styleTextarea.value = editorJSStyleElement.getAttribute('style') ?? '';
-
-    // To input line breaks
-    styleTextarea.addEventListener('keydown', (event) =>
-      event.stopPropagation()
-    );
-
-    styleTextarea.addEventListener('input', () =>
-      editorJSStyleElement.setAttribute('style', styleTextarea.value)
     );
 
     return true;
