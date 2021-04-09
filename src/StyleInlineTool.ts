@@ -26,11 +26,11 @@ class StyleInlineTool implements InlineTool {
   }
 
   static prepare() {
-    if (customElements.get('span')) {
+    if (customElements.get('editorjs-style')) {
       return;
     }
 
-    customElements.define('span', EditorJSStyleElement);
+    customElements.define('editorjs-style', EditorJSStyleElement);
   }
 
   #actions: HTMLDivElement;
